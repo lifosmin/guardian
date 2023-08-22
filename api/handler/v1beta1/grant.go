@@ -26,6 +26,8 @@ func (s *GRPCServer) ListGrants(ctx context.Context, req *guardianv1beta1.ListGr
 		CreatedBy:     req.GetCreatedBy(),
 		Owner:         req.GetOwner(),
 		OrderBy:       req.GetOrderBy(),
+		Size:          int(req.GetSize()),
+		Offset:        int(req.GetOffset()),
 	}
 	grants, err := s.listGrants(ctx, filter)
 	if err != nil {
