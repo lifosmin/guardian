@@ -293,7 +293,8 @@ func (s *AppealRepositoryTestSuite) TestFind() {
 
 	s.Run("Should return an array size and offset of n on success", func() {
 		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
-			Size: 1,
+			Size:   1,
+			Offset: 0,
 		})
 
 		s.NoError(err)

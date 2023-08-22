@@ -187,6 +187,15 @@ func (s *GrantRepositoryTestSuite) TestList() {
 		s.NoError(err)
 		s.Len(appeals, 1)
 	})
+	s.Run("Should return an array size and offset of n on success", func() {
+		appeals, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			Size:   1,
+			Offset: 0,
+		})
+
+		s.NoError(err)
+		s.Len(appeals, 1)
+	})
 }
 
 func (s *GrantRepositoryTestSuite) TestGetByID() {
