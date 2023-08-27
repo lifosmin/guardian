@@ -180,21 +180,37 @@ func (s *GrantRepositoryTestSuite) TestList() {
 		s.Nil(grants)
 	})
 	s.Run("Should return an array size and offset of n on success", func() {
-		appeals, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
 			Size: 1,
 		})
 
 		s.NoError(err)
-		s.Len(appeals, 1)
+		s.Len(grants, 1)
 	})
 	s.Run("Should return an array size and offset of n on success", func() {
-		appeals, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
 			Size:   1,
 			Offset: 0,
 		})
 
 		s.NoError(err)
-		s.Len(appeals, 1)
+		s.Len(grants, 1)
+	})
+	s.Run("Should return an array that matches q", func() {
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			Q: "123",
+		})
+
+		s.NoError(err)
+		s.Len(grants, 0)
+	})
+	s.Run("Should return an array of grants that matches account type", func() {
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			AccountTypes: []string{"x-account-type"},
+		})
+
+		s.NoError(err)
+		s.Len(grants, 0)
 	})
 }
 

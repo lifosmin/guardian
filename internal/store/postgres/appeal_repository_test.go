@@ -294,20 +294,27 @@ func (s *AppealRepositoryTestSuite) TestFind() {
 	s.Run("Should return an array size and offset of n on success", func() {
 		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
 			Size:   1,
-			Offset: 0,
-		})
-
-		s.NoError(err)
-		s.Len(appeals, 1)
-	})
-	s.Run("Should return an array size and offset of n on success", func() {
-		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
-			Size:   1,
 			Offset: 1,
 		})
 
 		s.NoError(err)
 		s.Len(appeals, 1)
+	})
+	s.Run("Should return an array that matches q", func() {
+		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
+			Q: "123",
+		})
+
+		s.NoError(err)
+		s.Len(appeals, 0)
+	})
+	s.Run("Should return an array of appeal that matches account type", func() {
+		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
+			AccountTypes: []string{"x-account-type"},
+		})
+
+		s.NoError(err)
+		s.Len(appeals, 0)
 	})
 }
 
