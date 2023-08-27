@@ -14,6 +14,7 @@ import (
 
 func (s *GRPCServer) ListGrants(ctx context.Context, req *guardianv1beta1.ListGrantsRequest) (*guardianv1beta1.ListGrantsResponse, error) {
 	filter := domain.ListGrantsFilter{
+		Q:             req.GetQ(),
 		Statuses:      req.GetStatuses(),
 		AccountIDs:    req.GetAccountIds(),
 		AccountTypes:  req.GetAccountTypes(),
@@ -29,13 +30,14 @@ func (s *GRPCServer) ListGrants(ctx context.Context, req *guardianv1beta1.ListGr
 		Size:          int(req.GetSize()),
 		Offset:        int(req.GetOffset()),
 	}
-	grants, err := s.listGrants(ctx, filter)
+	grants, total, err := s.listGrants(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
 	return &guardianv1beta1.ListGrantsResponse{
 		Grants: grants,
+		Total:  int32(total),
 	}, nil
 }
 
@@ -60,13 +62,14 @@ func (s *GRPCServer) ListUserGrants(ctx context.Context, req *guardianv1beta1.Li
 		Offset:        int(req.GetOffset()),
 		Owner:         user,
 	}
-	grants, err := s.listGrants(ctx, filter)
+	grants, total, err := s.listGrants(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
 	return &guardianv1beta1.ListUserGrantsResponse{
 		Grants: grants,
+		Total:  int32(total),
 	}, nil
 }
 
@@ -171,22 +174,27 @@ func (s *GRPCServer) RevokeGrants(ctx context.Context, req *guardianv1beta1.Revo
 	}, nil
 }
 
-func (s *GRPCServer) listGrants(ctx context.Context, filter domain.ListGrantsFilter) ([]*guardianv1beta1.Grant, error) {
+func (s *GRPCServer) listGrants(ctx context.Context, filter domain.ListGrantsFilter) ([]*guardianv1beta1.Grant, int64, error) {
 	grants, err := s.grantService.List(ctx, filter)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to list grants: %v", err)
+		return nil, 0, status.Errorf(codes.Internal, "failed to list grants: %v", err)
+	}
+
+	total, err := s.grantService.GetGrantsTotalCount(ctx, filter)
+	if err != nil {
+		return nil, 0, status.Errorf(codes.Internal, "failed to get Grant count list: %s", err)
 	}
 
 	var grantProtos []*guardianv1beta1.Grant
 	for i, a := range grants {
 		grantProto, err := s.adapter.ToGrantProto(&grants[i])
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to parse grant %q: %v", a.ID, err)
+			return nil, 0, status.Errorf(codes.Internal, "failed to parse grant %q: %v", a.ID, err)
 		}
 		grantProtos = append(grantProtos, grantProto)
 	}
 
-	return grantProtos, nil
+	return grantProtos, total, nil
 }
 
 func (s *GRPCServer) ImportGrantsFromProvider(ctx context.Context, req *guardianv1beta1.ImportGrantsFromProviderRequest) (*guardianv1beta1.ImportGrantsFromProviderResponse, error) {

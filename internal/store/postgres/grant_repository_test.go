@@ -206,6 +206,22 @@ func (s *GrantRepositoryTestSuite) TestList() {
 		}
 
 	})
+
+	s.Run("Should return an array that matches q", func() {
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			Q: "123",
+		})
+
+		s.NoError(err)
+		s.Len(grants, 0)
+	})
+	s.Run("Should return an array of grants that matches account type", func() {
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			AccountTypes: []string{"x-account-type"},
+		})
+		s.NoError(err)
+		s.Len(grants, 0)
+	})
 }
 
 func (s *GrantRepositoryTestSuite) TestGetByID() {
