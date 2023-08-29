@@ -117,9 +117,12 @@ func (s *GrpcHandlersSuite) TestListUserAppeals() {
 					UpdatedAt: timestamppb.New(timeNow),
 				},
 			},
+			Total: 1,
 		}
 		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.valueCtx"), expectedFilters).
 			Return(expectedAppeals, nil).Once()
+		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.valueCtx"), expectedFilters).
+			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListUserAppealsRequest{
 			Statuses:      []string{"active", "pending"},
@@ -180,6 +183,8 @@ func (s *GrpcHandlersSuite) TestListUserAppeals() {
 		}
 		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.valueCtx"), mock.Anything).
 			Return(invalidAppeals, nil).Once()
+		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.valueCtx"), mock.Anything).
+			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListUserAppealsRequest{}
 		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, "test-user")
