@@ -283,6 +283,18 @@ func (s *AppealRepositoryTestSuite) TestFind() {
 				},
 				expectedResult: []*domain.Appeal{dummyAppeals[1], dummyAppeals[0]},
 			},
+			{
+				filters: &domain.ListAppealsFilter{
+					Q: "user",
+				},
+				expectedResult: []*domain.Appeal{dummyAppeals[1], dummyAppeals[0]},
+			},
+			{
+				filters: &domain.ListAppealsFilter{
+					AccountTypes: []string{"x-account-type"},
+				},
+				expectedResult: []*domain.Appeal{dummyAppeals[1], dummyAppeals[0]},
+			},
 		}
 
 		for _, tc := range testCases {
@@ -315,22 +327,6 @@ func (s *AppealRepositoryTestSuite) TestFind() {
 			_, actualError := s.repository.Find(context.Background(), tc.filters)
 			s.Nil(actualError)
 		}
-	})
-	s.Run("Should return an array that matches q", func() {
-		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
-			Q: "123",
-		})
-
-		s.NoError(err)
-		s.Len(appeals, 0)
-	})
-	s.Run("Should return an array of appeal that matches account type", func() {
-		appeals, err := s.repository.Find(context.Background(), &domain.ListAppealsFilter{
-			AccountTypes: []string{"x-account-type"},
-		})
-
-		s.NoError(err)
-		s.Len(appeals, 1)
 	})
 }
 

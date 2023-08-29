@@ -1,4 +1,4 @@
-NAME="github.com/lifosmin/guardian"
+NAME="github.com/goto/guardian"
 COMMIT := $(shell git rev-parse --short HEAD)
 TAG := "$(shell git rev-list --tags --max-count=1)"
 VERSION := "$(shell git describe --tags ${TAG})-next"
