@@ -288,6 +288,7 @@ func (s *GrpcHandlersSuite) TestListAppeals() {
 					UpdatedAt: timestamppb.New(timeNow),
 				},
 			},
+			Total: 1,
 		}
 		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.emptyCtx"), expectedFilters).
 			Return(expectedAppeals, nil).Once()

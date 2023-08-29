@@ -66,6 +66,7 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 					},
 				},
 			},
+			Total: 1,
 		}
 		expectedFilter := domain.ListGrantsFilter{
 			Statuses:     []string{"test-status"},
