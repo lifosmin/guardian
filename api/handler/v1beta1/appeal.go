@@ -38,7 +38,6 @@ func (s *GRPCServer) ListUserAppeals(ctx context.Context, req *guardianv1beta1.L
 	if req.GetAccountTypes() != nil {
 		filters.AccountTypes = req.GetAccountTypes()
 	}
-
 	if req.GetResourceUrns() != nil {
 		filters.ResourceURNs = req.GetResourceUrns()
 	}

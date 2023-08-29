@@ -128,6 +128,42 @@ func (s *AppealRepositoryTestSuite) TestGetByID() {
 		s.Nil(actualError)
 		s.Equal(dummyAppeal.ID, actualRecord.ID)
 	})
+
+	s.Run("should run query based on filters", func() {
+		dummyAppeal := &domain.Appeal{
+			ResourceID:    s.dummyResource.ID,
+			PolicyID:      s.dummyPolicy.ID,
+			PolicyVersion: s.dummyPolicy.Version,
+			AccountID:     "user@example.com",
+			AccountType:   domain.DefaultAppealAccountType,
+			Role:          "role_test",
+			Permissions:   []string{"permission_test"},
+			CreatedBy:     "user@example.com",
+		}
+		testCases := []struct {
+			filters        *domain.ListAppealsFilter
+			expectedArgs   []driver.Value
+			expectedResult []*domain.Appeal
+		}{
+			{
+				filters: &domain.ListAppealsFilter{
+					Q: "user",
+				},
+				expectedResult: []*domain.Appeal{dummyAppeal},
+			},
+			{
+				filters: &domain.ListAppealsFilter{
+					AccountTypes: []string{"x-account-type"},
+				},
+				expectedResult: []*domain.Appeal{dummyAppeal},
+			},
+		}
+
+		for _, tc := range testCases {
+			_, actualError := s.repository.Find(context.Background(), tc.filters)
+			s.Nil(actualError)
+		}
+	})
 }
 
 func (s *AppealRepositoryTestSuite) TestFind() {
