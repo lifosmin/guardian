@@ -292,6 +292,8 @@ func (s *GrpcHandlersSuite) TestListAppeals() {
 		}
 		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.emptyCtx"), expectedFilters).
 			Return(expectedAppeals, nil).Once()
+		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.emptyCtx"), expectedFilters).
+			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListAppealsRequest{
 			AccountId:     expectedUser,
@@ -337,6 +339,8 @@ func (s *GrpcHandlersSuite) TestListAppeals() {
 		}
 		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.emptyCtx"), mock.Anything).
 			Return(invalidAppeals, nil).Once()
+		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.emptyCtx"), mock.Anything).
+			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListAppealsRequest{}
 		res, err := s.grpcServer.ListAppeals(context.Background(), req)

@@ -77,6 +77,9 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 		s.grantService.EXPECT().
 			List(mock.AnythingOfType("*context.emptyCtx"), expectedFilter).
 			Return(dummyGrants, nil).Once()
+		s.grantService.EXPECT().
+			GetGrantsTotalCount(mock.AnythingOfType("*context.emptyCtx"), expectedFilter).
+			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListGrantsRequest{
 			Statuses:     expectedFilter.Statuses,
@@ -122,7 +125,9 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 		s.grantService.EXPECT().
 			List(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
 			Return(expectedGrants, nil).Once()
-
+		s.grantService.EXPECT().
+			GetGrantsTotalCount(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
+			Return(int64(1), nil).Once()
 		req := &guardianv1beta1.ListGrantsRequest{}
 		res, err := s.grpcServer.ListGrants(context.Background(), req)
 
