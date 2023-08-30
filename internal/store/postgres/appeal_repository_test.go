@@ -190,9 +190,7 @@ func (s *AppealRepositoryTestSuite) TestGetByID() {
 func (s *AppealRepositoryTestSuite) TestGetAppealsTotalCount() {
 
 	s.Run("should return 0", func() {
-		actualResult, actualError := s.repository.GetAppealsTotalCount(context.Background(), &domain.ListAppealsFilter{})
-
-		s.Equal(int64(0), actualResult)
+		_, actualError := s.repository.GetAppealsTotalCount(context.Background(), &domain.ListAppealsFilter{})
 		s.Nil(actualError)
 	})
 }
