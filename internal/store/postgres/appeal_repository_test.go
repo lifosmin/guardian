@@ -130,15 +130,36 @@ func (s *AppealRepositoryTestSuite) TestGetByID() {
 	})
 
 	s.Run("should run query based on filters", func() {
-		dummyAppeal := &domain.Appeal{
-			ResourceID:    s.dummyResource.ID,
-			PolicyID:      s.dummyPolicy.ID,
-			PolicyVersion: s.dummyPolicy.Version,
-			AccountID:     "user@example.com",
-			AccountType:   domain.DefaultAppealAccountType,
-			Role:          "role_test",
-			Permissions:   []string{"permission_test"},
-			CreatedBy:     "user@example.com",
+		timeNowPlusAnHour := time.Now().Add(time.Hour)
+		dummyAppeals := []*domain.Appeal{
+			{
+				ResourceID:    s.dummyResource.ID,
+				PolicyID:      s.dummyPolicy.ID,
+				PolicyVersion: s.dummyPolicy.Version,
+				AccountID:     "user@example.com",
+				AccountType:   domain.DefaultAppealAccountType,
+				Role:          "role_test",
+				Status:        domain.AppealStatusApproved,
+				Permissions:   []string{"permission_test"},
+				CreatedBy:     "user@example.com",
+				Options: &domain.AppealOptions{
+					ExpirationDate: &time.Time{},
+				},
+			},
+			{
+				ResourceID:    s.dummyResource.ID,
+				PolicyID:      s.dummyPolicy.ID,
+				PolicyVersion: s.dummyPolicy.Version,
+				AccountID:     "user2@example.com",
+				AccountType:   domain.DefaultAppealAccountType,
+				Status:        domain.AppealStatusCanceled,
+				Role:          "role_test",
+				Permissions:   []string{"permission_test_2"},
+				CreatedBy:     "user2@example.com",
+				Options: &domain.AppealOptions{
+					ExpirationDate: &timeNowPlusAnHour,
+				},
+			},
 		}
 		testCases := []struct {
 			filters        *domain.ListAppealsFilter
@@ -149,13 +170,13 @@ func (s *AppealRepositoryTestSuite) TestGetByID() {
 				filters: &domain.ListAppealsFilter{
 					Q: "user",
 				},
-				expectedResult: []*domain.Appeal{dummyAppeal},
+				expectedResult: []*domain.Appeal{dummyAppeals[0], dummyAppeals[1]},
 			},
 			{
 				filters: &domain.ListAppealsFilter{
 					AccountTypes: []string{"x-account-type"},
 				},
-				expectedResult: []*domain.Appeal{dummyAppeal},
+				expectedResult: []*domain.Appeal{dummyAppeals[0], dummyAppeals[1]},
 			},
 		}
 
@@ -163,6 +184,16 @@ func (s *AppealRepositoryTestSuite) TestGetByID() {
 			_, actualError := s.repository.Find(context.Background(), tc.filters)
 			s.Nil(actualError)
 		}
+	})
+}
+
+func (s *AppealRepositoryTestSuite) TestGetAppealsTotalCount() {
+
+	s.Run("should return 0", func() {
+		actualResult, actualError := s.repository.GetAppealsTotalCount(context.Background(), &domain.ListAppealsFilter{})
+
+		s.Equal(int64(0), actualResult)
+		s.Nil(actualError)
 	})
 }
 

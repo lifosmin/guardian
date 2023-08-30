@@ -120,6 +120,15 @@ func (s *GrantRepositoryTestSuite) TearDownSuite() {
 	}
 }
 
+func (s *GrantRepositoryTestSuite) TestGetGrantsTotalCount() {
+
+	s.Run("should return 0", func() {
+		actualResult, actualError := s.repository.GetGrantsTotalCount(context.Background(), domain.ListGrantsFilter{})
+
+		s.Equal(int64(0), actualResult)
+		s.Nil(actualError)
+	})
+}
 func (s *GrantRepositoryTestSuite) TestList() {
 	expDate := time.Now()
 	dummyGrants := []*domain.Grant{

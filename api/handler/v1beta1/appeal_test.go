@@ -33,6 +33,8 @@ func (s *GrpcHandlersSuite) TestListUserAppeals() {
 			ResourceTypes: []string{"test-resource-type"},
 			ResourceURNs:  []string{"test-resource-urn"},
 			OrderBy:       []string{"test-order"},
+			AccountTypes:  []string{"test-account-type"},
+			Q:             "test",
 		}
 		expectedAppeals := []*domain.Appeal{
 			{
@@ -132,6 +134,8 @@ func (s *GrpcHandlersSuite) TestListUserAppeals() {
 			ResourceTypes: []string{"test-resource-type"},
 			ResourceUrns:  []string{"test-resource-urn"},
 			OrderBy:       []string{"test-order"},
+			AccountTypes:  []string{"test-account-type"},
+			Q:             "test",
 		}
 		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, expectedUser)
 		res, err := s.grpcServer.ListUserAppeals(ctx, req)
