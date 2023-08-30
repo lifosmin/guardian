@@ -121,7 +121,6 @@ func (s *GrantRepositoryTestSuite) TearDownSuite() {
 }
 
 func (s *GrantRepositoryTestSuite) TestGetGrantsTotalCount() {
-
 	s.Run("should return 0", func() {
 		_, actualError := s.repository.GetGrantsTotalCount(context.Background(), domain.ListGrantsFilter{})
 

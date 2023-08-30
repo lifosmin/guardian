@@ -7,6 +7,7 @@ import (
 	guardianv1beta1 "github.com/goto/guardian/api/proto/gotocompany/guardian/v1beta1"
 	"github.com/goto/guardian/core/appeal"
 	"github.com/goto/guardian/domain"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -177,14 +178,23 @@ func (s *GRPCServer) CancelAppeal(ctx context.Context, req *guardianv1beta1.Canc
 }
 
 func (s *GRPCServer) listAppeals(ctx context.Context, filters *domain.ListAppealsFilter) ([]*guardianv1beta1.Appeal, int64, error) {
-	appeals, err := s.appealService.Find(ctx, filters)
-	if err != nil {
-		return nil, 0, status.Errorf(codes.Internal, "failed to get appeal list: %s", err)
-	}
+	eg, ctx := errgroup.WithContext(ctx)
+	var appeals []*domain.Appeal
+	var total int64
 
-	total, err := s.appealService.GetAppealsTotalCount(ctx, filters)
-	if err != nil {
-		return nil, 0, status.Errorf(codes.Internal, "failed to get appeal count list: %s", err)
+	eg.Go(func() error {
+		appealRecords, err := s.appealService.Find(ctx, filters)
+		appeals = appealRecords
+		return err
+	})
+	eg.Go(func() error {
+		totalRecord, err := s.appealService.GetAppealsTotalCount(ctx, filters)
+		total = totalRecord
+		return err
+	})
+
+	if err := eg.Wait(); err != nil {
+		return nil, 0, err
 	}
 
 	appealProtos := []*guardianv1beta1.Appeal{}

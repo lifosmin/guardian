@@ -88,13 +88,10 @@ func (r *AppealRepository) Find(ctx context.Context, filters *domain.ListAppeals
 func (r *AppealRepository) GetAppealsTotalCount(ctx context.Context, filter *domain.ListAppealsFilter) (int64, error) {
 	db := r.db.WithContext(ctx)
 	db = applyAppealFilter(db, filter)
-
 	var count int64
-	if err := db.Model(&model.Appeal{}).Count(&count).Error; err != nil {
-		return 0, err
-	}
+	err := db.Model(&model.Appeal{}).Count(&count).Error
 
-	return count, nil
+	return count, err
 }
 
 // BulkUpsert new record to database
@@ -153,7 +150,6 @@ func (r *AppealRepository) Update(ctx context.Context, a *domain.Appeal) error {
 }
 
 func applyAppealFilter(db *gorm.DB, filters *domain.ListAppealsFilter) *gorm.DB {
-
 	db = db.Joins("JOIN resources ON appeals.resource_id = resources.id")
 	if filters.Q != "" {
 		// NOTE: avoid adding conditions before this grouped where clause.

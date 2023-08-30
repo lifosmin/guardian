@@ -52,13 +52,10 @@ func (r *GrantRepository) List(ctx context.Context, filter domain.ListGrantsFilt
 func (r *GrantRepository) GetGrantsTotalCount(ctx context.Context, filter domain.ListGrantsFilter) (int64, error) {
 	db := r.db.WithContext(ctx)
 	db = applyGrantFilter(db, filter)
-
 	var count int64
-	if err := db.Model(&model.Grant{}).Count(&count).Error; err != nil {
-		return 0, err
-	}
+	err := db.Model(&model.Grant{}).Count(&count).Error
 
-	return count, nil
+	return count, err
 }
 
 func (r *GrantRepository) GetByID(ctx context.Context, id string) (*domain.Grant, error) {

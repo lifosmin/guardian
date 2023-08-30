@@ -8,6 +8,7 @@ import (
 	"github.com/goto/guardian/core/grant"
 	"github.com/goto/guardian/core/provider"
 	"github.com/goto/guardian/domain"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -175,14 +176,23 @@ func (s *GRPCServer) RevokeGrants(ctx context.Context, req *guardianv1beta1.Revo
 }
 
 func (s *GRPCServer) listGrants(ctx context.Context, filter domain.ListGrantsFilter) ([]*guardianv1beta1.Grant, int64, error) {
-	grants, err := s.grantService.List(ctx, filter)
-	if err != nil {
-		return nil, 0, status.Errorf(codes.Internal, "failed to list grants: %v", err)
-	}
+	eg, ctx := errgroup.WithContext(ctx)
+	var grants []domain.Grant
+	var total int64
 
-	total, err := s.grantService.GetGrantsTotalCount(ctx, filter)
-	if err != nil {
-		return nil, 0, status.Errorf(codes.Internal, "failed to get Grant count list: %s", err)
+	eg.Go(func() error {
+		grantRecords, err := s.grantService.List(ctx, filter)
+		grants = grantRecords
+		return err
+	})
+	eg.Go(func() error {
+		totalRecord, err := s.grantService.GetGrantsTotalCount(ctx, filter)
+		total = totalRecord
+		return err
+	})
+
+	if err := eg.Wait(); err != nil {
+		return nil, 0, err
 	}
 
 	var grantProtos []*guardianv1beta1.Grant
