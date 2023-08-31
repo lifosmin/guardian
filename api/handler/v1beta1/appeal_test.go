@@ -303,9 +303,9 @@ func (s *GrpcHandlersSuite) TestListAppeals() {
 			},
 			Total: 1,
 		}
-		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.emptyCtx"), expectedFilters).
+		s.appealService.EXPECT().Find(mock.AnythingOfType("*context.cancelCtx"), expectedFilters).
 			Return(expectedAppeals, nil).Once()
-		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.emptyCtx"), expectedFilters).
+		s.appealService.EXPECT().GetAppealsTotalCount(mock.AnythingOfType("*context.cancelCtx"), expectedFilters).
 			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListAppealsRequest{
