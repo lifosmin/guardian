@@ -184,13 +184,19 @@ func (s *GRPCServer) listAppeals(ctx context.Context, filters *domain.ListAppeal
 
 	eg.Go(func() error {
 		appealRecords, err := s.appealService.Find(ctx, filters)
+		if err != nil {
+			return status.Errorf(codes.Internal, "failed to get appeal list: %s", err)
+		}
 		appeals = appealRecords
-		return err
+		return nil
 	})
 	eg.Go(func() error {
 		totalRecord, err := s.appealService.GetAppealsTotalCount(ctx, filters)
+		if err != nil {
+			return status.Errorf(codes.Internal, "failed to get appeal total count: %s", err)
+		}
 		total = totalRecord
-		return err
+		return nil
 	})
 
 	if err := eg.Wait(); err != nil {

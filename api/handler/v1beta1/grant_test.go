@@ -75,10 +75,10 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 			ResourceIDs:  []string{"test-resource-id"},
 		}
 		s.grantService.EXPECT().
-			List(mock.AnythingOfType("*context.emptyCtx"), expectedFilter).
+			List(mock.AnythingOfType("*context.cancelCtx"), expectedFilter).
 			Return(dummyGrants, nil).Once()
 		s.grantService.EXPECT().
-			GetGrantsTotalCount(mock.AnythingOfType("*context.emptyCtx"), expectedFilter).
+			GetGrantsTotalCount(mock.AnythingOfType("*context.cancelCtx"), expectedFilter).
 			Return(int64(1), nil).Once()
 
 		req := &guardianv1beta1.ListGrantsRequest{
@@ -99,8 +99,11 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 
 		expectedError := errors.New("unexpected error")
 		s.grantService.EXPECT().
-			List(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
+			List(mock.AnythingOfType("*context.cancelCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
 			Return(nil, expectedError).Once()
+		s.grantService.EXPECT().
+			GetGrantsTotalCount(mock.AnythingOfType("*context.cancelCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
+			Return(int64(0), nil).Once()
 
 		req := &guardianv1beta1.ListGrantsRequest{}
 		res, err := s.grpcServer.ListGrants(context.Background(), req)
@@ -123,10 +126,10 @@ func (s *GrpcHandlersSuite) TestListGrants() {
 			},
 		}
 		s.grantService.EXPECT().
-			List(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
+			List(mock.AnythingOfType("*context.cancelCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
 			Return(expectedGrants, nil).Once()
 		s.grantService.EXPECT().
-			GetGrantsTotalCount(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
+			GetGrantsTotalCount(mock.AnythingOfType("*context.cancelCtx"), mock.AnythingOfType("domain.ListGrantsFilter")).
 			Return(int64(1), nil).Once()
 		req := &guardianv1beta1.ListGrantsRequest{}
 		res, err := s.grpcServer.ListGrants(context.Background(), req)

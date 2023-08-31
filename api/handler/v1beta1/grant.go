@@ -182,13 +182,19 @@ func (s *GRPCServer) listGrants(ctx context.Context, filter domain.ListGrantsFil
 
 	eg.Go(func() error {
 		grantRecords, err := s.grantService.List(ctx, filter)
+		if err != nil {
+			return status.Errorf(codes.Internal, "failed to get grant list: %s", err)
+		}
 		grants = grantRecords
-		return err
+		return nil
 	})
 	eg.Go(func() error {
 		totalRecord, err := s.grantService.GetGrantsTotalCount(ctx, filter)
+		if err != nil {
+			return status.Errorf(codes.Internal, "failed to get grant total count: %s", err)
+		}
 		total = totalRecord
-		return err
+		return nil
 	})
 
 	if err := eg.Wait(); err != nil {
