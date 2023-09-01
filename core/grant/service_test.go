@@ -1015,3 +1015,19 @@ func (s *ServiceTestSuite) TestGetGrantsTotalCount() {
 		s.NoError(actualError)
 	})
 }
+
+func (s *ServiceTestSuite) TestListUserRolesCount() {
+	s.Run("should return error if got error from repository", func() {
+		s.setup()
+		expectedError := errors.New("repository error")
+		s.mockRepository.EXPECT().
+			ListUserRoles(mock.AnythingOfType("*context.emptyCtx"), domain.ListGrantsFilter{}).
+			Return(nil, expectedError).Once()
+
+		actualCount, actualError := s.service.ListUserRoles(context.Background(), domain.ListGrantsFilter{})
+
+		s.Zero(actualCount)
+		s.EqualError(actualError, expectedError.Error())
+	})
+
+}

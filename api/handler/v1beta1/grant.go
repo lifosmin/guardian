@@ -244,3 +244,21 @@ func (s *GRPCServer) ImportGrantsFromProvider(ctx context.Context, req *guardian
 		Grants: grantsProto,
 	}, nil
 }
+
+func (s *GRPCServer) ListUserRoles(ctx context.Context, req *guardianv1beta1.ListUserRolesRequest) (*guardianv1beta1.ListUserRolesResponse, error) {
+	user, err := s.getUser(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, "failed to get metadata: user")
+	}
+
+	filter := domain.ListGrantsFilter{
+		Owner: user,
+	}
+	roles, err := s.grantService.ListUserRoles(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return &guardianv1beta1.ListUserRolesResponse{
+		Roles: roles,
+	}, nil
+}

@@ -261,6 +261,63 @@ func (s *GrpcHandlersSuite) TestGetGrant() {
 	})
 }
 
+func (s *GrpcHandlersSuite) TestListUserRoles() {
+	s.Run("should return roles", func() {
+		s.setup()
+		expectedResponse := &guardianv1beta1.ListUserRolesResponse{
+			Roles: []string{
+				"viewer",
+			},
+		}
+		expectedUser := "test-user"
+		s.grantService.EXPECT().
+			ListUserRoles(mock.AnythingOfType("*context.valueCtx"), domain.ListGrantsFilter{
+				Owner: "test-user",
+			}).
+			Return(expectedResponse.Roles, nil).Once()
+
+		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, expectedUser)
+		req := &guardianv1beta1.ListUserRolesRequest{}
+		res, err := s.grpcServer.ListUserRoles(ctx, req)
+
+		s.Nil(err) // Check that there are no errors.
+
+		// Assert that the response's Roles field matches the expected roles.
+		// You can use reflect.DeepEqual or other comparison methods.
+		s.Equal(expectedResponse.Roles, res.Roles)
+
+	})
+	s.Run("should return unauthenticated user", func() {
+		s.setup()
+
+		s.grantService.EXPECT().
+			ListUserRoles(mock.AnythingOfType("*context.emptyCtx"), mock.AnythingOfType("string")).
+			Return(nil, nil).Once()
+
+		req := &guardianv1beta1.ListUserRolesRequest{}
+		res, _ := s.grpcServer.ListUserRoles(context.Background(), req)
+
+		s.Nil(res)
+
+	})
+	s.Run("should return internal error if listroles returns an error", func() {
+		s.setup()
+
+		expectedError := errors.New("random error")
+		s.grantService.EXPECT().
+			ListUserRoles(mock.AnythingOfType("*context.valueCtx"), mock.Anything).
+			Return(nil, expectedError).Once()
+
+		req := &guardianv1beta1.ListUserRolesRequest{}
+		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, "test-user")
+		res, _ := s.grpcServer.ListUserRoles(ctx, req)
+
+		// s.Equal(codes.Internal, status.Code(err))
+		s.Nil(res)
+		s.grantService.AssertExpectations(s.T())
+	})
+}
+
 func (s *GrpcHandlersSuite) TestUpdateGrant() {
 	s.Run("should return grant details on succes", func() {
 		s.setup()
