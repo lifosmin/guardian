@@ -691,7 +691,7 @@ message ListUserRolesRequest {
 }
 
 message ListUserRolesResponse {
-  string roles = 1;
+  repeated string roles = 1;
 }
 
 message GetGrantRequest {
