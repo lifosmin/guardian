@@ -164,7 +164,7 @@ func (s *GrantRepositoryTestSuite) TestList() {
 			ProviderTypes:             []string{s.dummyResource.ProviderType},
 			ProviderURNs:              []string{s.dummyResource.ProviderURN},
 			ResourceTypes:             []string{s.dummyResource.Type},
-			ResourceURNs:              []string{s.dummyResource.URN},
+			ResourceURNs:              []string{"x"},
 			CreatedBy:                 s.dummyAppeal.CreatedBy,
 			OrderBy:                   []string{"status"},
 			ExpirationDateLessThan:    time.Now(),
