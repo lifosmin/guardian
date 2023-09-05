@@ -229,6 +229,14 @@ func (s *GrantRepositoryTestSuite) TestList() {
 		s.NoError(err)
 		s.Len(grants, 0)
 	})
+	s.Run("Should return an array of grants that matches account type", func() {
+		grants, err := s.repository.List(context.Background(), domain.ListGrantsFilter{
+			ProviderTypes: []string{"x"},
+			ProviderURNs:  []string{"x"},
+		})
+		s.NoError(err)
+		s.Len(grants, 0)
+	})
 }
 
 func (s *GrantRepositoryTestSuite) TestGetByID() {
