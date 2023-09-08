@@ -271,9 +271,7 @@ func (s *GrpcHandlersSuite) TestListUserRoles() {
 		}
 		expectedUser := "test-user"
 		s.grantService.EXPECT().
-			ListUserRoles(mock.AnythingOfType("*context.valueCtx"), domain.ListGrantsFilter{
-				Owner: "test-user",
-			}).
+			ListUserRoles(mock.AnythingOfType("*context.valueCtx"), "test-user").
 			Return(expectedResponse.Roles, nil).Once()
 
 		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, expectedUser)
