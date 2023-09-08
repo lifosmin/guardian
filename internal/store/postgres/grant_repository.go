@@ -74,9 +74,9 @@ func (r *GrantRepository) GetByID(ctx context.Context, id string) (*domain.Grant
 	return g, nil
 }
 
-func (r *GrantRepository) ListUserRoles(ctx context.Context, filter domain.ListGrantsFilter) ([]string, error) {
+func (r *GrantRepository) ListUserRoles(ctx context.Context, id string) ([]string, error) {
 	db := r.db.WithContext(ctx)
-	db = db.Where(`"grants"."owner" = ?`, filter.Owner)
+	db = db.Where(`"grants"."owner" = ?`, id)
 	db = db.Distinct("role")
 	var roles []string
 	if err := db.Model(&model.Grant{}).Pluck("role", &roles).Error; err != nil {

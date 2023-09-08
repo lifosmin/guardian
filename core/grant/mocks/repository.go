@@ -230,15 +230,15 @@ func (_c *Repository_List_Call) RunAndReturn(run func(context.Context, domain.Li
 }
 
 // ListUserRoles provides a mock function with given fields: _a0, _a1
-func (_m *Repository) ListUserRoles(_a0 context.Context, _a1 domain.ListGrantsFilter) ([]string, error) {
+func (_m *Repository) ListUserRoles(_a0 context.Context, _a1 string) ([]string, error) {
 	ret := _m.Called(_a0, _a1)
 
 	var r0 []string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.ListGrantsFilter) ([]string, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]string, error)); ok {
 		return rf(_a0, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, domain.ListGrantsFilter) []string); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) []string); ok {
 		r0 = rf(_a0, _a1)
 	} else {
 		if ret.Get(0) != nil {
@@ -246,7 +246,7 @@ func (_m *Repository) ListUserRoles(_a0 context.Context, _a1 domain.ListGrantsFi
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, domain.ListGrantsFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(_a0, _a1)
 	} else {
 		r1 = ret.Error(1)
@@ -262,14 +262,14 @@ type Repository_ListUserRoles_Call struct {
 
 // ListUserRoles is a helper method to define mock.On call
 //   - _a0 context.Context
-//   - _a1 domain.ListGrantsFilter
+//   - _a1 string
 func (_e *Repository_Expecter) ListUserRoles(_a0 interface{}, _a1 interface{}) *Repository_ListUserRoles_Call {
 	return &Repository_ListUserRoles_Call{Call: _e.mock.On("ListUserRoles", _a0, _a1)}
 }
 
-func (_c *Repository_ListUserRoles_Call) Run(run func(_a0 context.Context, _a1 domain.ListGrantsFilter)) *Repository_ListUserRoles_Call {
+func (_c *Repository_ListUserRoles_Call) Run(run func(_a0 context.Context, _a1 string)) *Repository_ListUserRoles_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(domain.ListGrantsFilter))
+		run(args[0].(context.Context), args[1].(string))
 	})
 	return _c
 }
@@ -279,7 +279,7 @@ func (_c *Repository_ListUserRoles_Call) Return(_a0 []string, _a1 error) *Reposi
 	return _c
 }
 
-func (_c *Repository_ListUserRoles_Call) RunAndReturn(run func(context.Context, domain.ListGrantsFilter) ([]string, error)) *Repository_ListUserRoles_Call {
+func (_c *Repository_ListUserRoles_Call) RunAndReturn(run func(context.Context, string) ([]string, error)) *Repository_ListUserRoles_Call {
 	_c.Call.Return(run)
 	return _c
 }

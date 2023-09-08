@@ -44,6 +44,7 @@ func (s *GRPCServer) ListGrants(ctx context.Context, req *guardianv1beta1.ListGr
 
 func (s *GRPCServer) ListUserGrants(ctx context.Context, req *guardianv1beta1.ListUserGrantsRequest) (*guardianv1beta1.ListUserGrantsResponse, error) {
 	user, err := s.getUser(ctx)
+
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "failed to get metadata: user")
 	}
@@ -251,10 +252,7 @@ func (s *GRPCServer) ListUserRoles(ctx context.Context, req *guardianv1beta1.Lis
 		return nil, status.Error(codes.Unauthenticated, "failed to get metadata: user")
 	}
 
-	filter := domain.ListGrantsFilter{
-		Owner: user,
-	}
-	roles, err := s.grantService.ListUserRoles(ctx, filter)
+	roles, err := s.grantService.ListUserRoles(ctx, user)
 	if err != nil {
 		return nil, err
 	}

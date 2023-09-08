@@ -129,7 +129,7 @@ func (s *GrantRepositoryTestSuite) TestGetGrantsTotalCount() {
 }
 func (s *GrantRepositoryTestSuite) TestListUserRoles() {
 	s.Run("should return 0", func() {
-		_, actualError := s.repository.ListUserRoles(context.Background(), domain.ListGrantsFilter{})
+		_, actualError := s.repository.ListUserRoles(context.Background(), "user")
 
 		s.Nil(actualError)
 	})

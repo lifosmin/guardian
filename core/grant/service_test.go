@@ -1024,7 +1024,7 @@ func (s *ServiceTestSuite) TestListUserRolesCount() {
 			ListUserRoles(mock.AnythingOfType("*context.emptyCtx"), domain.ListGrantsFilter{}).
 			Return(nil, expectedError).Once()
 
-		actualCount, actualError := s.service.ListUserRoles(context.Background(), domain.ListGrantsFilter{})
+		actualCount, actualError := s.service.ListUserRoles(context.Background(), "user")
 
 		s.Zero(actualCount)
 		s.EqualError(actualError, expectedError.Error())
