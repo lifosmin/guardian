@@ -237,7 +237,7 @@ func (s *GrantRepositoryTestSuite) TestList() {
 		s.NoError(err)
 		s.Len(grants, 0)
 	})
-
+}
 func (s *GrantRepositoryTestSuite) TestGetByID() {
 	dummyGrants := []*domain.Grant{
 		{
