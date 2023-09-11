@@ -79,11 +79,8 @@ func (r *GrantRepository) ListUserRoles(ctx context.Context, id string) ([]strin
 	db = db.Where(`"grants"."owner" = ?`, id)
 	db = db.Distinct("role")
 	var roles []string
-	if err := db.Model(&model.Grant{}).Pluck("role", &roles).Error; err != nil {
-		return nil, err
-	}
-
-	return roles, nil
+	err := db.Model(&model.Grant{}).Pluck("role", &roles).Error
+	return roles, err
 }
 
 func (r *GrantRepository) Update(ctx context.Context, a *domain.Grant) error {

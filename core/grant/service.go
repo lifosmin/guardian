@@ -677,7 +677,7 @@ func (s *Service) GetGrantsTotalCount(ctx context.Context, filters domain.ListGr
 
 func (s *Service) ListUserRoles(ctx context.Context, owner string) ([]string, error) {
 	if owner == "" {
-		return nil, ErrEmptyIDParam
+		return nil, ErrEmptyOwner
 	}
 	return s.repo.ListUserRoles(ctx, owner)
 }

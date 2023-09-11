@@ -254,7 +254,7 @@ func (s *GRPCServer) ListUserRoles(ctx context.Context, req *guardianv1beta1.Lis
 
 	roles, err := s.grantService.ListUserRoles(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "Internal Error")
 	}
 	return &guardianv1beta1.ListUserRolesResponse{
 		Roles: roles,

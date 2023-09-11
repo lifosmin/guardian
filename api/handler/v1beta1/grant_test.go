@@ -279,9 +279,7 @@ func (s *GrpcHandlersSuite) TestListUserRoles() {
 		res, err := s.grpcServer.ListUserRoles(ctx, req)
 
 		s.Nil(err) // Check that there are no errors.
-
-		// Assert that the response's Roles field matches the expected roles.
-		// You can use reflect.DeepEqual or other comparison methods.
+		s.grantService.AssertExpectations(s.T())
 		s.Equal(expectedResponse.Roles, res.Roles)
 
 	})
@@ -293,8 +291,9 @@ func (s *GrpcHandlersSuite) TestListUserRoles() {
 			Return(nil, nil).Once()
 
 		req := &guardianv1beta1.ListUserRolesRequest{}
-		res, _ := s.grpcServer.ListUserRoles(context.Background(), req)
+		res, err := s.grpcServer.ListUserRoles(context.Background(), req)
 
+		s.Equal(codes.Unauthenticated, status.Code(err))
 		s.Nil(res)
 
 	})
@@ -308,9 +307,9 @@ func (s *GrpcHandlersSuite) TestListUserRoles() {
 
 		req := &guardianv1beta1.ListUserRolesRequest{}
 		ctx := context.WithValue(context.Background(), authEmailTestContextKey{}, "test-user")
-		res, _ := s.grpcServer.ListUserRoles(ctx, req)
+		res, err := s.grpcServer.ListUserRoles(ctx, req)
 
-		// s.Equal(codes.Internal, status.Code(err))
+		s.Equal(codes.Internal, status.Code(err))
 		s.Nil(res)
 		s.grantService.AssertExpectations(s.T())
 	})
