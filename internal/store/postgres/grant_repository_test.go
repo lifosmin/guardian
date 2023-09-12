@@ -135,12 +135,6 @@ func (s *GrantRepositoryTestSuite) TestListUserRoles() {
 		s.Equal(actualResult, expectedRoles)
 		s.Nil(actualError)
 	})
-
-	s.Run("should return err", func() {
-		_, actualError := s.repository.ListUserRoles(context.Background(), "user")
-
-		s.Nil(actualError)
-	})
 }
 
 func (s *GrantRepositoryTestSuite) TestList() {

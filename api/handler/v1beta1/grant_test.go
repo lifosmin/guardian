@@ -281,6 +281,7 @@ func (s *GrpcHandlersSuite) TestListUserRoles() {
 		s.Nil(err) // Check that there are no errors.
 		s.grantService.AssertExpectations(s.T())
 		s.Equal(expectedResponse.Roles, res.Roles)
+		s.Equal(codes.OK, status.Code(err))
 
 	})
 	s.Run("should return unauthenticated user", func() {
